@@ -1,0 +1,51 @@
+[project]
+name = "planet-mcp"
+version = "0.1.0"
+readme = "README.md"
+dependencies = [
+    "aiocache>=0.12.3",
+    "fastmcp==2.11.0",
+    "planet==3.0.0",
+    "uv",
+    "mercantile>=1.2.1",
+]
+requires-python = ">=3.11"
+
+[project.scripts]
+planet-mcp = "planet_mcp.main:main"
+
+[tool.uv.sources]
+planet-auth = { index = "planet" }
+
+[[tool.uv.index]]
+name = "planet"
+url = "https://pypi.prod.planet-labs.com/simple/"
+publish-url = "https://pypi.prod.planet-labs.com/simple/"
+explicit = true
+
+[build-system]
+requires = ["uv_build>=0.8.13,<0.9.0"]
+build-backend = "uv_build"
+
+[tool.pyright]
+exclude = [".venv"]
+
+[tool.pytest.ini_options]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+asyncio_mode = "auto"
+addopts = ["-v", "--tb=short"]
+
+[dependency-groups]
+dev = [
+    "black>=25.1.0",
+    "pyright>=1.1.403",
+    "ruff>=0.12.4",
+]
+test = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "httpx>=0.25.0",
+    "respx>=0.21.0",
+]
