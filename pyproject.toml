@@ -10,6 +10,10 @@ dependencies = [
     "mercantile>=1.2.1",
 ]
 requires-python = ">=3.11"
+license = "Apache-2.0"
+license-files = [
+    "LICENSE",
+]
 
 [project.scripts]
 planet-mcp = "planet_mcp.main:main"
