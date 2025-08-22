@@ -116,6 +116,12 @@ This will add the planet-mcp server to your Claude Code configuration, allowing 
 * python (>= 3.10) + uv
 * npx + friends (node >= 20) (to run inspector, if desired)
 
+#### With Makefile
+
+1. ```make dev-up```
+2. Optional, `make inspector`
+
+#### Without Makefile
 
 1.  **Create and activate virtual environment using uv:**
 
