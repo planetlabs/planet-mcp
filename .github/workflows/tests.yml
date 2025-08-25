@@ -1,0 +1,42 @@
+name: Tests
+
+on:
+  pull_request:
+  push:
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  lint:
+    name: Linting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Prepare common Python build environment
+        uses: ./.github/actions/python-build-env-setup
+        with:
+          python-version: "3.13"
+      - name: 'Nox: Python Black'
+        run: |
+          nox -s lint
+
+  test:
+    name: Test Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.11', '3.12', '3.13']
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Prepare common Python build environment
+      uses: ./.github/actions/python-build-env-setup
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Test ${{ matrix.python-version }}
+      run: |
+        nox -s test-${{ matrix.python-version }}

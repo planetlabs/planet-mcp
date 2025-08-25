@@ -1,0 +1,50 @@
+name: 'Common Python job setup'
+description: 'Perform build environment setup steps common to all Python jobs.'
+
+inputs:
+  python-version:
+    description: 'Python version to use'
+    required: true
+    default: "3.13"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Fetch git tags
+      shell: bash
+      run: |
+        git fetch --tags origin
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ inputs.python-version }}
+        allow-prereleases: true
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v6
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: Install the project dependencies
+      shell: bash
+      run: |
+       uv sync --locked --all-extras --dev
+
+    - name: Pip cache
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip
+        restore-keys: |
+          ${{ runner.os }}-pip
+
+    - name: "Install tools : nox"
+      shell: bash
+      run: |
+        pip install --upgrade nox
+
+    - name: "Build Environment"
+      shell: bash
+      run: |
+        printenv | sort
