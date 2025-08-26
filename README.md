@@ -4,8 +4,6 @@ planet-mcp is a local [MCP](https://modelcontextprotocol.io/introduction) server
 
 To get started with your preferred AI agent, find it in the Usage section below.
 
-[TOC]
-
 ## Beta warning
 
 **This is experimental software.** This MCP service will invoke the Planet SDK/CLI on your behalf. It can create and modify orders, subscriptions, and more. Do not disable tool approvals and always carefully review tool prompts before approving them. Use at your own risk.
