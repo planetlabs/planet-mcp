@@ -75,19 +75,35 @@ To connect using GitHub Copilot, configure the `mcp.json` file (see [VSCode docs
 {
   "servers": {
     "planet": {
-      "command": "planet-mcp",
+      "command": "planet-mcp"
     }
   },
   "inputs": []
 }
 ```
 
-### Example queries
+## Example queries
 
 - Does Planet have any recent imagery over Puget Sound?
 - List my subscriptions
 - Get my June 2025 subscriptions and cancel the ones with name Netherlands
 - Create a PlanetScope subscription with the first item in my Netherlands Feature Collection.
+
+## Troubleshooting
+
+### Unable to launch planet-mcp (ENOENT, No such file or directory, etc.):
+
+This is likely due to the `planet-mcp` package being installed to a different Python environment than the one your AI agent is using. The easiest way to resolve this is to run `which planet-mcp` after installing the package, and then copy the full path to your AI agent's MCP configuration. For example, if `which planet-mcp` returns `/home/user/.local/share/virtualenvs/test/bin/planet-mcp`, your config file would look like:
+
+```json
+{
+  "servers": {
+    "planet": {
+      "command": "/home/user/.local/share/virtualenvs/test/bin/planet-mcp"
+    }
+  }
+}
+```
 
 
 ## Local dev
