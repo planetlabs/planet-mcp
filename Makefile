@@ -5,4 +5,4 @@ dev-up:
 
 .PHONY: inspector
 inspector:
-	uv run fastmcp dev src/css_mcp/main.py
+	uv run fastmcp dev src/planet_mcp/main.py
