@@ -25,10 +25,19 @@ class MCPService:
         mcp: FastMCP,
         session: planet.Session,
         ignore: set[str] | None = None,
+        include: set[str] | None = None,
     ):
         self.mcp = mcp
         self.session = session
 
+        if ignore and include:
+            raise ValueError("Cannot specify both ignore and include sets.")
+
+        self.include = include
+        self.ignore = ignore
+
+        if self.ignore is None and self.include is None:
+            self.ignore = DEFAULT_IGNORE
         self.ignore = ignore if ignore is not None else DEFAULT_IGNORE
 
         self.make_tools(planet.FeaturesClient, "features")
@@ -46,7 +55,9 @@ class MCPService:
             if inspect.ismethod(func) and name[0] != "_":
                 full_name = f"{prefix}_{name}"
 
-                if full_name in self.ignore:
+                if self.ignore is not None and full_name in self.ignore:
+                    continue
+                if self.include is not None and name not in self.include:
                     continue
 
                 # extended tool options
