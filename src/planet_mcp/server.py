@@ -11,6 +11,14 @@ from pydantic import PydanticSchemaGenerationError
 DEFAULT_IGNORE = {
     "data_wait_asset",
     "orders_wait",
+    "data_get_stats",
+    "data_update_search",
+    "orders_aggregated_order_stats",
+    "subscriptions_get_results_csv",
+    "subscriptions_patch_subscription",
+    "subscriptions_update_subscription",
+    "mosaics_get_quad_contributions",
+    "destinations_patch_destination",
 }
 
 
