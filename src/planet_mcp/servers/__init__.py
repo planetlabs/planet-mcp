@@ -1,7 +1,7 @@
-from . import sdk_wrapper
+from . import sdk
 from . import tiles
 
 all = [
-    sdk_wrapper,
+    sdk,
     tiles,
 ]

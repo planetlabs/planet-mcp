@@ -16,10 +16,14 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Planet MCP Server",
     )
+    # when using fastmcp inspector and other tools, we handle
+    # extra args here (or else the parser barfs)
     parser.add_argument("args", nargs="*")
     parser.add_argument("--include-tags", type=csv, default=None)
     parser.add_argument("--exclude-tags", type=csv, default=None)
     parser.add_argument("--servers", type=csv, default=None)
+    # similar to extra args, inspector adds this
+    parser.add_argument("--no-banner", action="store_true")
     return parser.parse_args()
 
 
@@ -34,7 +38,7 @@ mcp = init(
 # this is the entry point for the executable script installed via package
 # and also supports execution via `uv run fastmcp run src/main.py`
 def main():
-    mcp.run(transport="stdio")
+    mcp.run(transport="stdio", show_banner=not args.no_banner)
 
 
 if __name__ == "__main__":

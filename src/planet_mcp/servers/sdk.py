@@ -24,7 +24,7 @@ _DEFAULT_IGNORE = {
 
 
 def mcp() -> FastMCP:
-    mcp = FastMCP("sdk_wrapper")
+    mcp = FastMCP("sdk")
     make_tools(mcp, planet.FeaturesClient, "features")
     make_tools(mcp, planet.DataClient, "data")
     make_tools(mcp, planet.OrdersClient, "orders")

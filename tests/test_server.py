@@ -18,6 +18,6 @@ async def test_search_tool():
     )
     async with client:
         result = await client.call_tool(
-            "sdk_wrapper_data_search", {"item_types": ["SkySatScene"]}
+            "sdk_data_search", {"item_types": ["SkySatScene"]}
         )
     assert result.structured_content == {"result": [{"type": "Feature"}]}
