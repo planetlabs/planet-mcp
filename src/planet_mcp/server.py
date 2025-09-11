@@ -1,150 +1,56 @@
-import functools
-import inspect
-from planet_mcp import descriptions, tiles
+from contextlib import asynccontextmanager
+from typing import AsyncIterator
 from fastmcp import FastMCP
-import planet
-from typing import Union, Optional
+from planet_mcp import servers
 
-from pydantic import PydanticSchemaGenerationError
-
-
-DEFAULT_IGNORE = {
-    "data_wait_asset",
-    "orders_wait",
-    "data_get_stats",
-    "data_update_search",
-    "orders_aggregated_order_stats",
-    "subscriptions_get_results_csv",
-    "subscriptions_patch_subscription",
-    "subscriptions_update_subscription",
-    "mosaics_get_quad_contributions",
-    "destinations_patch_destination",
-}
+_instructions = """
+Instructions for using Planet's official MCP server.
+"""
 
 
-class MCPService:
-    """MCP service for the Planet API
-
-    member `mcp` contains the FastMCP app instance.
-    """
-
-    def __init__(
-        self,
-        mcp: FastMCP,
-        session: planet.Session,
-        ignore: set[str] | None = None,
-        include: set[str] | None = None,
-    ):
-        self.mcp = mcp
-        self.session = session
-
-        if ignore and include:
-            raise ValueError("Cannot specify both ignore and include sets.")
-
-        self.include = include
-        self.ignore = ignore
-
-        if self.ignore is None and self.include is None:
-            self.ignore = DEFAULT_IGNORE
-        self.ignore = ignore if ignore is not None else DEFAULT_IGNORE
-
-        self.make_tools(planet.FeaturesClient, "features")
-        self.make_tools(planet.DataClient, "data")
-        self.make_tools(planet.OrdersClient, "orders")
-        self.make_tools(planet.SubscriptionsClient, "subscriptions")
-        self.make_tools(planet.MosaicsClient, "mosaics")
-        self.make_tools(planet.DestinationsClient, "destinations")
-
-        # add tiles tools
-        tiles.init(self.mcp, self.session)
-
-    def make_tools(self, client_class, prefix: str):
-        for name, func in inspect.getmembers(client_class(self.session)):
-            if inspect.ismethod(func) and name[0] != "_":
-                full_name = f"{prefix}_{name}"
-
-                if self.ignore is not None and full_name in self.ignore:
-                    continue
-                if self.include is not None and name not in self.include:
-                    continue
-
-                # extended tool options
-                opts = {}
-
-                # check if there is a description override for this tool
-                if full_name in descriptions.overrides:
-                    opts["description"] = descriptions.overrides[full_name]
-
-                # async generator functions have an incompatible return type.
-                # ensure they are converted to a list[dict] return type.
-                if inspect.isasyncgenfunction(func):
-                    func = _async_get_wrapper(func, prefix)
-
-                # no return functions end up with a "self" parameter so this
-                # works around by adding a simple response
-                # @todo - upstream bug?
-                sig = inspect.signature(func)
-                if sig.return_annotation is None:
-                    func = _return_wrapper(func)
-
-                try:
-                    self.mcp.tool(func, name=full_name, **opts)
-                except PydanticSchemaGenerationError:
-                    # there's a few functions we need to modify again because of custom types.
-                    modified_func = _create_param_modified_wrapper(func)
-                    try:
-                        self.mcp.tool(modified_func, name=full_name, **opts)
-                    except Exception as e:
-                        print("Unable to add tool", full_name, e)
+class PlanetContext:
+    def __init__(self):
+        pass
 
 
-def _async_get_wrapper(f, prefix):
-    """wrap an async generator to return a list[dict]"""
+def _lifespan(context: PlanetContext):
 
-    @functools.wraps(f)
-    async def generate_async(*args, **kwargs) -> list[dict]:
-        return [i async for i in (f(*args, **kwargs))]
+    @asynccontextmanager
+    async def lifespan(server: FastMCP) -> AsyncIterator[PlanetContext]:
+        yield context
 
-    # functool.wraps annotates using the original function return
-    generate_async.__annotations__["return"] = list[dict]
-    return generate_async
+    return lifespan
 
 
-def _return_wrapper(func):
-    @functools.wraps(func)
-    async def wrapper(*args, **kwargs):
-        await func(*args, **kwargs)
-        return {"status": "ok"}
+def init(
+    enabled_servers: set[str] | None = None,
+    include_tags: set[str] | None = None,
+    exclude_tags: set[str] | None = None,
+) -> FastMCP:
 
-    wrapper.__annotations__["return"] = dict
-    return wrapper
+    context = PlanetContext()
 
+    mcp = FastMCP(
+        "Planet MCP Server",
+        lifespan=_lifespan(context),
+        instructions=_instructions,
+        include_tags=include_tags,
+        exclude_tags=exclude_tags,
+    )
 
-def _create_param_modified_wrapper(original_func):
-    """
-    Some functions that accept special types (typing.Protocol) fail during
-    FastMCP tool registration. This wrapper modifies the function's signature,
-    replacing the type hints with simple types that FastMCP can handle.
-    """
+    for server in servers.all:
+        try:
+            # server protocol is either a variable or callable named mcp
+            entry = getattr(server, "mcp")
+        except AttributeError:
+            raise Exception(f"programmer error, mcp attribute not in {server}")
+        if callable(entry):
+            entry = entry()
+        if not isinstance(entry, FastMCP):
+            raise Exception(
+                f"programmer error, expected FastMCP type, got {type(entry)}"
+            )
+        if enabled_servers is None or entry.name in enabled_servers:
+            mcp.mount(entry, entry.name)  # type: ignore
 
-    @functools.wraps(original_func)
-    async def wrapper(*args, **kwargs):
-        return await original_func(*args, **kwargs)
-
-    try:
-        sig = inspect.signature(original_func)
-
-        for param_name, param in sig.parameters.items():
-            # Convert problematic types into useable ones.
-            # we want to override the GeojsonLike field
-            # and remove the union of the Feature which accepts a dict or a GeoInterface
-            if param_name in ("feature", "quad", "mosaic", "series"):
-                wrapper.__annotations__[param_name] = dict
-            elif param_name == "geometry" and "planet.models" in str(param.annotation):
-                wrapper.__annotations__[param_name] = Optional[Union[dict, str]] | None
-
-    except Exception as e:
-        print(f"Error modifying signature: {e}")
-        wrapper.__annotations__ = {}
-
-    return wrapper
+    return mcp
