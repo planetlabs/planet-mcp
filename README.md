@@ -12,6 +12,10 @@ Tools may be added, removed or altered based on testing/feedback.
 
 Reminder: MCP servers and tools will increase the number of tokens used during interactions with your LLM provider.
 
+We would love to hear back from you after using this, if you have a feature request or find something isn't working please file a [Github issue](https://github.com/planetlabs/planet-mcp/issues/new) for us!
+Thanks
+
+
 ## Usage
 
 ### Prerequisites
