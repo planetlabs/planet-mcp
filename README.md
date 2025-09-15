@@ -101,9 +101,9 @@ By default, we have disabled download tools and the subscriptions tools, as we h
 ## Example queries
 
 - Does Planet have any recent imagery over Puget Sound?
-- List my subscriptions
-- Get my June 2025 subscriptions and cancel the ones with name Netherlands
-- Create a PlanetScope subscription with the first item in my Netherlands Feature Collection.
+- List my feature collections
+- Order me the latest high-res imagery over the Netherlands
+- Create a PlanetScope order with the first item in my Netherlands Feature Collection.
 
 ## Troubleshooting
 
