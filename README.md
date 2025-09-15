@@ -88,12 +88,12 @@ To connect using GitHub Copilot, configure the `mcp.json` file (see [VSCode docs
 
 ### Customizing the tools
 If you'd like, you can enable or disable specific tools in the MCP server. For example, if you're only working with the orders tooling: You can start the server with just the that enabled:
-`--include-tags="orders"`
+`--include-tags=orders`
 
-If you want to keep the defaults, but disable a certain tool, you can: `--exclude-tags="destinations"`
+If you want to keep the defaults, but disable a certain tool, you can: `--exclude-tags=destinations`
 
 In order to disable more than one tool you can provide a comma separated list like:
-`--exclude-tags="destinations","moasics"`
+`--exclude-tags=destinations,moasics`
 
 By default, we have disabled download tools and the subscriptions tools, as we have found those tools don't work very well with LLMs at the moment.
 
