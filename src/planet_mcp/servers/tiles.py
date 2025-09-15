@@ -10,7 +10,7 @@ from planet_mcp.clients import session
 mcp = FastMCP("tiles")
 
 
-@mcp.tool
+@mcp.tool(tags={"tiles", "scene"})
 async def get_scene_tile(
     item_type: Annotated[str, Field(pattern=r"^\w+$")],
     item_id: Annotated[str, Field(pattern=r"^\w+$")],
@@ -48,7 +48,7 @@ async def get_scene_tile(
     )
 
 
-@mcp.tool
+@mcp.tool(tags={"tiles", "thumbnail"})
 async def get_scene_thumbnail(
     item_type: Annotated[str, Field(pattern=r"^\w+$")],
     item_id: Annotated[str, Field(pattern=r"^\w+$")],
