@@ -9,6 +9,9 @@ from typing import Union, Optional
 
 from pydantic import PydanticSchemaGenerationError
 
+
+# tools we don't want enabled at all.
+# they simply don't work well in an AI context.
 _DEFAULT_IGNORE = {
     "data_wait_asset",
     "orders_wait",
@@ -22,15 +25,20 @@ _DEFAULT_IGNORE = {
     "destinations_patch_destination",
 }
 
+SDK_CLIENTS = [
+    (planet.FeaturesClient, "features"),
+    (planet.DataClient, "data"),
+    (planet.OrdersClient, "orders"),
+    (planet.SubscriptionsClient, "subscriptions"),
+    (planet.MosaicsClient, "mosaics"),
+    (planet.DestinationsClient, "destinations"),
+]
+
 
 def mcp() -> FastMCP:
     mcp = FastMCP("sdk")
-    make_tools(mcp, planet.FeaturesClient, "features")
-    make_tools(mcp, planet.DataClient, "data")
-    make_tools(mcp, planet.OrdersClient, "orders")
-    make_tools(mcp, planet.SubscriptionsClient, "subscriptions")
-    make_tools(mcp, planet.MosaicsClient, "mosaics")
-    make_tools(mcp, planet.DestinationsClient, "destinations")
+    for client, prefix in SDK_CLIENTS:
+        make_tools(mcp, client, prefix)
     return mcp
 
 
@@ -61,8 +69,16 @@ def make_tools(mcp: FastMCP, client_class: type, prefix: str):
             if sig.return_annotation is None:
                 func = _return_wrapper(func)
 
-            if "download" in name:
-                opts["tags"] = set("download")
+            opts["tags"] = set()
+
+            for tag in ["download", "patch", "update"]:
+                if tag in name:
+                    opts["tags"].add(tag)
+
+            # add tags based on sdk client
+            for _, tag in SDK_CLIENTS:
+                if tag in full_name:
+                    opts["tags"].add(tag)
 
             try:
                 mcp.tool(func, name=full_name, **opts)
