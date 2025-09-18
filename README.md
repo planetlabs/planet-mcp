@@ -20,14 +20,15 @@ Thanks
 
 ### Prerequisites
 
-1. Python
-2. Planet SDK
+1. Python 3.11 or higher
 
-To install the Planet SDK and MCP server, use `pip` or your preferred package manager:
+To install the Planet MCP server, use `pip` or your preferred package manager:
 
 ```
-pip install planet planet-mcp
+pip install planet-mcp
 ```
+
+This will also install the planet SDK.
 
 ### Authentication
 

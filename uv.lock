@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 2
 requires-python = ">=3.11"
 
 [[package]]
@@ -777,7 +777,7 @@ requires-dist = [
     { name = "aiocache", specifier = ">=0.12.3" },
     { name = "fastmcp", specifier = "==2.11.0" },
     { name = "mercantile", specifier = ">=1.2.1" },
-    { name = "planet", specifier = "==3.0.0" },
+    { name = "planet", specifier = ">=3.0.0" },
     { name = "uv" },
 ]
 
