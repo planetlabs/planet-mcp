@@ -5,7 +5,7 @@ readme = "README.md"
 dependencies = [
     "aiocache>=0.12.3",
     "fastmcp==2.11.0",
-    "planet==3.0.0",
+    "planet>=3.0.0",
     "uv",
     "mercantile>=1.2.1",
 ]
