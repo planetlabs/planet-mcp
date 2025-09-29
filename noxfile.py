@@ -93,13 +93,6 @@ def publish_pypi(session):
 
 
 def _publish(session, repository):
-    missing = [p for p in BUILD_DIRS if not Path(p).is_dir()]
-    if missing:
-        session.error(
-            f"Missing one or more build directories: {', '.join(missing)}. "
-            "Run build session and try again"
-        )
-
     session.install("twine")
 
     files = [str(f) for f in Path("dist").iterdir()]
