@@ -74,7 +74,7 @@ To connect using Claude Desktop, add the following to your `claude_desktop_confi
 
 #### Gemini CLI
 
-Add the following to your `~/.gemini/settings.json` file:
+To connect using [Gemini CLI](https://geminicli.com/docs/get-started/configuration/#example-settingsjson), add the following to your `~/.gemini/settings.json` file:
 
 ```json
 "mcpServers": {
