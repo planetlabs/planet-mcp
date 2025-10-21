@@ -24,7 +24,7 @@ Thanks
 
 To install the Planet MCP server, use `pip` or your preferred package manager:
 
-```
+```bash
 pip install planet-mcp
 ```
 
@@ -57,6 +57,21 @@ To connect with [Claude Code](https://claude.ai/code), run the following command
 claude mcp add planet planet-mcp
 ```
 
+#### Claude Desktop
+
+To connect using Claude Desktop, add the following to your `claude_desktop_config.json` file (see [MCP documentation](https://modelcontextprotocol.io/docs/develop/connect-local-servers) for more details):
+
+```json
+{
+  "mcpServers": {
+    "planet": {
+      "type": "stdio",
+      "command": "planet-mcp"
+    }
+  }
+}
+```
+
 #### Gemini CLI
 
 Add the following to your `~/.gemini/settings.json` file:
@@ -80,10 +95,10 @@ To connect using GitHub Copilot, configure the `mcp.json` file (see [VSCode docs
 {
   "servers": {
     "planet": {
+      "type": "stdio",
       "command": "planet-mcp"
     }
-  },
-  "inputs": []
+  }
 }
 ```
 
@@ -94,7 +109,7 @@ If you'd like, you can enable or disable specific tools in the MCP server. For e
 If you want to keep the defaults, but disable a certain tool, you can: `--exclude-tags=destinations`
 
 In order to disable more than one tool you can provide a comma separated list like:
-`--exclude-tags=destinations,moasics`
+`--exclude-tags=destinations,mosaics`
 
 By default, we have disabled download tools and the subscriptions tools, as we have found those tools don't work very well with LLMs at the moment.
 
@@ -127,7 +142,7 @@ This is likely due to the `planet-mcp` package being installed to a different Py
 
 ### Prerequisites
 
-* python (>= 3.10) + uv
+* python (>= 3.11) + uv
 * npx + friends (node >= 20) (to run inspector, if desired)
 
 #### With Makefile
