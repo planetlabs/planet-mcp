@@ -7,9 +7,8 @@ from planet_mcp.clients import session
 from . import descriptions
 from fastmcp import FastMCP
 import planet
-from typing import Union, Optional
+from typing import Union
 
-from pydantic import PydanticSchemaGenerationError
 
 
 # tools we don't want enabled at all.
