@@ -10,7 +10,6 @@ import planet
 from typing import Union
 
 
-
 # tools we don't want enabled at all.
 # they simply don't work well in an AI context.
 _DEFAULT_IGNORE = {
