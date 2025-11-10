@@ -3,6 +3,7 @@ import inspect
 from types import NoneType
 import typing
 
+from planet_mcp import models
 from planet_mcp.clients import session
 from . import descriptions
 from fastmcp import FastMCP
@@ -149,8 +150,8 @@ def _create_param_modified_wrapper(original_func):
             if param_name in ("feature", "quad", "mosaic", "series"):
                 wrapper.__annotations__[param_name] = dict
             elif param_name == "geometry" and "planet.models" in str(param.annotation):
-                # llms should always submit geometry inputs as a dict
-                hint = dict
+                # llms should always submit geometry inputs as a Polygon or Point
+                hint = models.Polygon | models.Point
 
                 # add None if originally used (NoneType will be an arg
                 # within a Union type)
