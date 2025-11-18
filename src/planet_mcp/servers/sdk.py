@@ -13,16 +13,21 @@ from pydantic import PydanticSchemaGenerationError
 # tools we don't want enabled at all.
 # they simply don't work well in an AI context.
 _DEFAULT_IGNORE = {
-    "data_wait_asset",
-    "orders_wait",
+    "data_create_search",
+    "data_delete_search",
+    "data_get_search",
     "data_get_stats",
+    "data_list_searches",
     "data_update_search",
+    "data_wait_asset",
+    "destinations_patch_destination",
+    "mosaics_get_quad_contributions",
     "orders_aggregated_order_stats",
+    "orders_cancel_orders",
+    "orders_wait",
     "subscriptions_get_results_csv",
     "subscriptions_patch_subscription",
     "subscriptions_update_subscription",
-    "mosaics_get_quad_contributions",
-    "destinations_patch_destination",
 }
 
 SDK_CLIENTS = [
