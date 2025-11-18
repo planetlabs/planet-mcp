@@ -1,13 +1,14 @@
 import functools
 import inspect
+from types import NoneType
+import typing
 
+from planet_mcp import models
 from planet_mcp.clients import session
 from . import descriptions
 from fastmcp import FastMCP
 import planet
-from typing import Union, Optional
-
-from pydantic import PydanticSchemaGenerationError
+from typing import Union
 
 
 # tools we don't want enabled at all.
@@ -28,6 +29,19 @@ _DEFAULT_IGNORE = {
     "subscriptions_get_results_csv",
     "subscriptions_patch_subscription",
     "subscriptions_update_subscription",
+}
+
+# tools with signatures we want to simplify for LLM usage
+TOOL_SIG_OVERRIDE = {
+    "features_add_items",
+    "data_get_item_coverage",
+    "data_search",
+    "mosaics_download_quad",
+    "mosaics_download_quads",
+    "mosaics_get_quad",
+    "mosaics_list_quads",
+    "mosaics_list_series_mosaics",
+    "mosaics_summarize_quads",
 }
 
 SDK_CLIENTS = [
@@ -85,15 +99,12 @@ def make_tools(mcp: FastMCP, client_class: type, prefix: str):
                 if tag in full_name:
                     opts["tags"].add(tag)
 
-            try:
-                mcp.tool(func, name=full_name, **opts)
-            except PydanticSchemaGenerationError:
-                # there's a few functions we need to modify again because of custom types.
-                modified_func = _create_param_modified_wrapper(func)
-                try:
-                    mcp.tool(modified_func, name=full_name, **opts)
-                except Exception as e:
-                    print("Unable to add tool", full_name, e)
+            # some tools have function signatures that need to be
+            # modified/simplified.
+            if full_name in TOOL_SIG_OVERRIDE:
+                func = _create_param_modified_wrapper(func)
+
+            mcp.tool(func, name=full_name, **opts)
 
 
 def _async_get_wrapper(f, prefix):
@@ -120,9 +131,14 @@ def _return_wrapper(func):
 
 def _create_param_modified_wrapper(original_func):
     """
-    Some functions that accept special types (typing.Protocol) fail during
-    FastMCP tool registration. This wrapper modifies the function's signature,
-    replacing the type hints with simple types that FastMCP can handle.
+    Create a wrapper function with a modified signature using types that
+    are compatible with FastMCP and/or easier for LLMs to work with.
+
+    * FastMCP tool registration doesn't support Protocol types.
+    * the Planet SDK is flexible with geometry inputs (accepting either feature ref
+      strings, geojson dicts or shapely-like geometries), but for LLM tool usage
+      we generally want geojson as an object/dict. Our tests have shown better
+      and more consistent results when tool inputs use dicts only.
     """
 
     @functools.wraps(original_func)
@@ -139,7 +155,16 @@ def _create_param_modified_wrapper(original_func):
             if param_name in ("feature", "quad", "mosaic", "series"):
                 wrapper.__annotations__[param_name] = dict
             elif param_name == "geometry" and "planet.models" in str(param.annotation):
-                wrapper.__annotations__[param_name] = Optional[Union[dict, str]] | None
+                # llms should always submit geometry inputs as a geojson geometry
+                hint = models.Geometry
+
+                # add None if originally used (NoneType will be an arg
+                # within a Union type)
+                if typing.get_origin(
+                    param.annotation
+                ) is Union and NoneType in typing.get_args(param.annotation):
+                    hint = hint | None
+                wrapper.__annotations__[param_name] = hint
 
     except Exception as e:
         print(f"Error modifying signature: {e}")
