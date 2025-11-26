@@ -10,7 +10,6 @@ from fastmcp import FastMCP
 import planet
 from typing import Union
 
-
 # tools we don't want enabled at all.
 # they simply don't work well in an AI context.
 _DEFAULT_IGNORE = {
@@ -19,6 +18,7 @@ _DEFAULT_IGNORE = {
     "data_get_search",
     "data_get_stats",
     "data_list_searches",
+    "data_search",
     "data_update_search",
     "data_wait_asset",
     "destinations_patch_destination",
@@ -35,7 +35,6 @@ _DEFAULT_IGNORE = {
 TOOL_SIG_OVERRIDE = {
     "features_add_items",
     "data_get_item_coverage",
-    "data_search",
     "mosaics_download_quad",
     "mosaics_download_quads",
     "mosaics_get_quad",
