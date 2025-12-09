@@ -20,11 +20,14 @@ overrides = {
         }
         ```
 
-    search_filter: a Planet Data API filter for advanced searches.
+    start_date: An optional datestring to use as the start date for the search. Use ISO 8601 format, e.g. 2022-04-14T00:00:00Z.
+    end_date: An optional datestring to use as the end date for the search. Use ISO 8601 format. If not provided, searches from start_date onwards.
 
     If the user does not ask for specific item types, default to ["PSScene", "SkySatScene", "SkySatCollect"].
 
     Avoid using search_filter unless the user has asked for specific date ranges or other advanced parameters. If a
     user asks for a scene from "today", do a search as normal and present the first (most recent) result.
+
+    Note: The search automatically filters for cloud_cover <= 0.2 (20%).
     """
 }
