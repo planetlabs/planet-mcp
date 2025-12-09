@@ -17,7 +17,7 @@ mcp = FastMCP("sdk")
 )
 async def data_search(
     item_types: list[str],
-    start_date: str,
+    start_date: str | None,
     end_date: str | None,
     geometry: models.Geometry,
 ):
