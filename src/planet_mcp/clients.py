@@ -7,6 +7,7 @@ def _init_session(cls: type[Session]) -> Session:
     _session = cls()
     # todo add our version?
     _session._client.headers["User-Agent"] = f"planet-mcp {__version__}"
+    _session._client.headers["X-Planet-App"] = "planet-mcp"
     return _session
 
 

@@ -1,8 +1,10 @@
 from datetime import datetime
 
 from fastmcp import FastMCP
-from planet import Planet
+from planet import DataClient
+
 from planet_mcp import models
+from planet_mcp.clients import session
 from planet_mcp.servers import descriptions
 
 # technically not using the sdk to make the tool but we can add it to that
@@ -21,8 +23,8 @@ async def data_search(
     end_date: str | None,
     geometry: models.Geometry,
 ):
+    data_client = DataClient(session=session())
 
-    planet = Planet()
     cloud_filter = {
         "type": "RangeFilter",
         "field_name": "cloud_cover",
@@ -49,9 +51,10 @@ async def data_search(
         }
         filter["config"].append(datefilter)
 
-    results = planet.data.search(
+    results = data_client.search(
         item_types=item_types,
         geometry=dict(geometry),
         search_filter=filter,
+        limit=10,
     )
-    return results
+    return [r async for r in results]
