@@ -1,6 +1,6 @@
 [project]
 name = "planet-mcp"
-version = "0.2.0"
+version = "0.3.0"
 readme = "README.md"
 dependencies = [
     "aiocache>=0.12.3",
