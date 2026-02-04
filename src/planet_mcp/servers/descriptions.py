@@ -2,8 +2,7 @@
 Description overrides.
 """
 
-overrides = {
-    "data_search": """
+overrides = {"data_search": """
     Search for Planet imagery (scenes).
 
     item_types:
@@ -29,5 +28,4 @@ overrides = {
     user asks for a scene from "today", do a search as normal and present the first (most recent) result.
 
     Note: The search automatically filters for cloud_cover <= 0.2 (20%).
-    """
-}
+    """}
