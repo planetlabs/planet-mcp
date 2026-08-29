@@ -1,4 +1,5 @@
 from typing import NotRequired
+
 from typing_extensions import TypedDict
 
 Position = list[float]

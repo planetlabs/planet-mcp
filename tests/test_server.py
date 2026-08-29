@@ -1,10 +1,11 @@
-from http import HTTPStatus
 import json
+from http import HTTPStatus
 
 import httpx
 import pytest
-from fastmcp import Client
 import respx
+from fastmcp import Client
+
 from planet_mcp.server import init
 
 client = Client(init())

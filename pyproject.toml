@@ -45,7 +45,7 @@ addopts = ["-v", "--tb=short"]
 dev = [
     "black>=25.1.0",
     "pyright>=1.1.403",
-    "ruff>=0.12.4",
+    "ruff==0.16.5",
 ]
 test = [
     "pytest>=8.0.0",
