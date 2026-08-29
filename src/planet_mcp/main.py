@@ -4,12 +4,13 @@ is installed, this is installed as an executable named planet-mcp.
 """
 
 import argparse
+
 from planet_mcp.server import init
 
 
 def parse_args() -> argparse.Namespace:
     def csv(value):
-        return set(t.strip() for t in (value or "").split(","))
+        return {t.strip() for t in (value or "").split(",")}
 
     parser = argparse.ArgumentParser(
         description="Planet MCP Server",

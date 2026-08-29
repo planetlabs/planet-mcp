@@ -1,14 +1,16 @@
 import functools
 import inspect
-from types import NoneType
 import typing
+from types import NoneType
+from typing import Union
+
+import planet
+from fastmcp import FastMCP
 
 from planet_mcp import models
 from planet_mcp.clients import session
+
 from . import descriptions
-from fastmcp import FastMCP
-import planet
-from typing import Union
 
 # tools we don't want enabled at all.
 # they simply don't work well in an AI context.
@@ -165,7 +167,7 @@ def _create_param_modified_wrapper(original_func):
                     hint = hint | None
                 wrapper.__annotations__[param_name] = hint
 
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
         print(f"Error modifying signature: {e}")
         wrapper.__annotations__ = {}
 
