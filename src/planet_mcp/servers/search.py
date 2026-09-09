@@ -37,13 +37,9 @@ async def data_search(
     if start_date is not None or end_date is not None:
         datefilter_config = {}
         if start_date is not None:
-            datefilter_config["gte"] = datetime.fromisoformat(
-                start_date.replace("Z", "+00:00")
-            ).isoformat()
+            datefilter_config["gte"] = datetime.fromisoformat(start_date).isoformat()
         if end_date is not None:
-            datefilter_config["lte"] = datetime.fromisoformat(
-                end_date.replace("Z", "+00:00")
-            ).isoformat()
+            datefilter_config["lte"] = datetime.fromisoformat(end_date).isoformat()
         datefilter = {
             "type": "DateRangeFilter",
             "field_name": "acquired",

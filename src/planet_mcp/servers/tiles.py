@@ -1,8 +1,9 @@
 from typing import Annotated
-from fastmcp import FastMCP
-from fastmcp.utilities.types import Image
+
 import httpx
 import mercantile
+from fastmcp import FastMCP
+from fastmcp.utilities.types import Image
 from pydantic import Field
 
 from planet_mcp.clients import session

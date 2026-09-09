@@ -1,6 +1,7 @@
-from pathlib import Path
-import nox
 import shutil
+from pathlib import Path
+
+import nox
 
 nox.options.stop_on_first_error = True
 nox.options.reuse_existing_virtualenvs = False
@@ -33,7 +34,7 @@ def lint(session):
     session.run(
         "uv", "tool", "run", "black", "--verbose", "--check", "--diff", "--color", "."
     )
-    session.run("uv", "tool", "run", "ruff", "--verbose", "check", ".")
+    session.run("uv", "tool", "run", "ruff@0.16.5", "--verbose", "check", ".")
 
 
 @nox.session
@@ -68,7 +69,7 @@ def build(session):
 
     session.install("build", "twine", "check-wheel-contents")
 
-    session.run(*"python -m build --sdist --wheel".split())
+    session.run(*["python", "-m", "build", "--sdist", "--wheel"])
     session.run("check-wheel-contents", "dist")
 
 

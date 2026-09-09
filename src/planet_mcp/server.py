@@ -1,6 +1,8 @@
+from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
-from typing import AsyncIterator
+
 from fastmcp import FastMCP
+
 from planet_mcp import servers
 
 _instructions = """
@@ -41,13 +43,15 @@ def init(
     for server in servers.all:
         try:
             # server protocol is either a variable or callable named mcp
-            entry = getattr(server, "mcp")
+            entry = server.mcp
         except AttributeError:
-            raise Exception(f"programmer error, mcp attribute not in {server}")
+            raise AttributeError(
+                f"programmer error, mcp attribute not in {server}"
+            ) from None
         if callable(entry):
             entry = entry()
         if not isinstance(entry, FastMCP):
-            raise Exception(
+            raise TypeError(
                 f"programmer error, expected FastMCP type, got {type(entry)}"
             )
         if enabled_servers is None or entry.name in enabled_servers:

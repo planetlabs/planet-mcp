@@ -1,6 +1,4 @@
-from . import sdk
-from . import tiles
-from . import search
+from . import sdk, search, tiles
 
 all = [
     sdk,
